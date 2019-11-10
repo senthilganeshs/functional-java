@@ -59,6 +59,9 @@ public interface List<T> extends Iterable<T> {
         return bools.foldLeft(false, (r, b) -> r || b);
     }
     
+    public static <R> List<R> of (final java.util.List<R> list) {
+        return new ListIterable<>(list);
+    }
     
     @SafeVarargs
     public static <R> List<R> of (final R...values) {
@@ -92,9 +95,7 @@ public interface List<T> extends Iterable<T> {
         
         @Override
         public String toString() {
-            if (list.isEmpty())
-                return "";
-            return foldLeft("[", (t, r) -> t.toString() +"," + r) + "]";
+            return ((List<String>) map(Object::toString)).intersperse(",").foldLeft("[", (r, t) -> r + t) + "]";
         }
     }
 }
