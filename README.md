@@ -1,3 +1,4 @@
+![build](https://travis-ci.org/senthilganeshs/functional-java.svg?branch=master)
 # functional-java
 
 Functional Java is an initiative to bring functional APIs to JAVA without compromizing on object oriented programming principes.
