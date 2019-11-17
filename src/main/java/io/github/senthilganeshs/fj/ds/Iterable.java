@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 
 public interface Iterable<T> {
 
-
     <R> Iterable<R> empty();
 
     Iterable<T> build (final T input);

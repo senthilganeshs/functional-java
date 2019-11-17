@@ -3,6 +3,7 @@ package io.github.senthilganeshs.fj.ds;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+
 public class IterableTest {
 
     
@@ -72,6 +73,19 @@ public class IterableTest {
             .traverse(i -> List.of('a', 'b', 'c'))
             .flatMap(id -> id)
             .foldLeft(0, (r, c) -> r + 1),
-            (int) Math.pow(3, 2) * 2);     
+            (int) Math.pow(3, 2) * 2);        
+    }
+    
+    @Test
+    public void testBinarytree() throws Exception {
+        Assert.assertEquals(BinaryTree.of(1,2,3).compareTo(2), 0);//left rotation.
+        Assert.assertEquals(BinaryTree.of(3,1,2).compareTo(2), 0);//left-right rotation
+        Assert.assertEquals(BinaryTree.of(1,3,2).compareTo(2), 0);//right-left rotation
+        Assert.assertEquals(BinaryTree.of(3,2,1).compareTo(2), 0);//right rotation
+        
+        Assert.assertTrue(BinaryTree.of(1,2,3,4,5,6,7,8,9).contains(5));
+        Assert.assertFalse(BinaryTree.of(1,2,3,4,5,6,7,8).contains(9));
+        
+        System.out.println(BinaryTree.of(3,1,6,4,2,5).apply(List.of(i -> i + 1)));
     }
 }

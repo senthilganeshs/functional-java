@@ -1,10 +1,14 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.BiFunction;
 
 public interface List<T> extends Iterable<T> {
+    
+    @Override List<T> build(final T input);
+    
+    static <R extends Comparable<R>> Iterable<R> sort (final Iterable<R> iter) {
+        return BinaryTree.of(iter).sorted();
+    }
     
     /**
      * Utility functions
@@ -60,42 +64,79 @@ public interface List<T> extends Iterable<T> {
     }
     
     public static <R> List<R> of (final java.util.List<R> list) {
-        return new ListIterable<>(list);
+        return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);
     }
     
     @SafeVarargs
     public static <R> List<R> of (final R...values) {
-        return new ListIterable<>(Arrays.asList(values));
+        if (values == null || values.length == 0)
+            return nil();
+        List<R> list = nil();
+        for (R value : values) {
+            list = list.build(value);
+        }
+        return list;
     }
     
-    final static class ListIterable<T> implements List<T> {
+    static final List<Void> EMPTY = new EmptyList<Void>();
+    
+    @SuppressWarnings("unchecked")
+    public static<R> List<R> nil() {
+        return (List<R>) EMPTY;
+    }
+    
+    public static <R> List<R> cons(final List<R> head, final R tail) {
+        return new LinkedList<>(head, tail);
+    }
+    
+    final static class EmptyList<T> implements List<T> {
 
-        private final java.util.List<T> list;
-
-        ListIterable(final java.util.List<T> list) {
-            this.list = list;
-        }
-        
         @Override
         public <R> Iterable<R> empty() {
-            return new ListIterable<>(new ArrayList<>());
-        }
-
-        @Override
-        public Iterable<T> build(T input) {
-            java.util.List<T> newList = new ArrayList<>(list);
-            newList.add(input);
-            return new ListIterable<>(newList);
+            return nil();
         }
 
         @Override
         public <R> R foldLeft(R seed, BiFunction<R, T, R> fn) {
-            return list.stream().reduce(seed, (r, t) -> fn.apply(r, t), (r1, r2) -> r2);
+            return seed;
+        }
+
+        @Override
+        public List<T> build(T input) {
+            return new LinkedList<>(this, input);
         }
         
         @Override
         public String toString() {
-            return ((List<String>) map(Object::toString)).intersperse(",").foldLeft("[", (r, t) -> r + t) + "]";
+            return "";
+        }
+        
+    }
+    
+    final static class LinkedList<T> implements List<T> {
+        private final T tail;
+        private final List<T> head;
+        
+        LinkedList (final List<T> head, final T tail) {
+            this.head = head;
+            this.tail = tail;
+        }
+        
+        @Override
+        public <R> Iterable<R> empty() {
+            return nil();
+        }
+        @Override
+        public <R> R foldLeft(R seed, BiFunction<R, T, R> fn) {
+            return fn.apply(head.foldLeft(seed, (r, t) -> fn.apply(r, t)), tail);
+        }
+        @Override
+        public List<T> build(T input) {
+            return cons(this, input);
+        }
+        @Override
+        public String toString() {
+            return head.foldLeft("[", (r, t) -> r + t + ",") + tail + "]";
         }
     }
 }
