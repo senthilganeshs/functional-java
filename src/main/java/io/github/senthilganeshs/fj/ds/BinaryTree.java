@@ -111,14 +111,14 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
                 if (Math.abs(lfh - rth) == 2) {
                     if (rt.compareTo(other) < 0) {
                         //single-right-rotation
-                        return rt.replaceLeft(lf -> 
-                            new AVLTree<>(value, left, lf.replaceLeft(lflf -> lflf)));
+                        return rt.replaceLeft(rtlf -> 
+                            new AVLTree<>(value, left, rtlf));
                         
                     } else {
                         //right-left-rotation
                         return rt.swapLeft()
-                            .replaceLeft(lf ->
-                            new AVLTree<>(value, left, lf.replaceLeft(lflf -> lflf)));
+                            .replaceLeft(rtlf ->
+                            new AVLTree<>(value, left, rtlf));
                     }
                 } else {
                     return new AVLTree<>(value, left, rt);
