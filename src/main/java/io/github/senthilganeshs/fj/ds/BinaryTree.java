@@ -7,10 +7,6 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
     
     @Override public BinaryTree<T> build(final T value);
     
-    public BinaryTree<T> buildLeft (final T value);
-    
-    public BinaryTree<T> buildRight (final T value);
-    
     public BinaryTree<T> replaceLeft (final Function<BinaryTree<T>, BinaryTree<T>> left);
     
     public BinaryTree<T> replaceRight (final Function<BinaryTree<T>, BinaryTree<T>> right);
@@ -111,29 +107,19 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
                 if (Math.abs(lfh - rth) == 2) {
                     if (rt.compareTo(other) < 0) {
                         //single-right-rotation
-                        return rt.replaceLeft(lf -> 
-                            new AVLTree<>(value, left, lf.replaceLeft(lflf -> lflf)));
+                        return rt.replaceLeft(rtlf -> 
+                            new AVLTree<>(value, left, rtlf));
                         
                     } else {
                         //right-left-rotation
                         return rt.swapLeft()
-                            .replaceLeft(lf ->
-                            new AVLTree<>(value, left, lf.replaceLeft(lflf -> lflf)));
+                            .replaceLeft(rtlf ->
+                            new AVLTree<>(value, left, rtlf));
                     }
                 } else {
                     return new AVLTree<>(value, left, rt);
                 }
             }
-        }
-
-        @Override
-        public BinaryTree<T> buildLeft(T value) {
-            return new AVLTree<>(this.value, left.build(value), right);
-        }
-
-        @Override
-        public BinaryTree<T> buildRight(T value) {
-            return new AVLTree<>(this.value, left, right.build(value));
         }
 
         @Override
@@ -201,16 +187,6 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
         @Override
         public BinaryTree<T> build(T value) {
             return new AVLTree<>(value, nil(), nil());
-        }
-
-        @Override
-        public BinaryTree<T> buildLeft(T value) {
-            return build(value);
-        }
-
-        @Override
-        public BinaryTree<T> buildRight(T value) {
-            return build(value);
         }
 
         @Override

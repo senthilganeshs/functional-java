@@ -86,6 +86,6 @@ public class IterableTest {
         Assert.assertTrue(BinaryTree.of(1,2,3,4,5,6,7,8,9).contains(5));
         Assert.assertFalse(BinaryTree.of(1,2,3,4,5,6,7,8).contains(9));
         
-        System.out.println(BinaryTree.of(3,1,6,4,2,5).apply(List.of(i -> i + 1)));
+        System.out.println(BinaryTree.of(3,1,6,4,2,5).apply(List.of(i -> i + 1)));        
     }
 }

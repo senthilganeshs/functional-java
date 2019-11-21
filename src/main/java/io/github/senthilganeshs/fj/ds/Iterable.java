@@ -44,6 +44,18 @@ public interface Iterable<T> {
     default <R, S> Iterable<S> liftA2 (final BiFunction<T, R, S> fn, final Iterable<R> rs) {
         return liftA2(t -> r -> fn.apply(t, r), rs);
     }
+    
+    default <P, Q, R> Iterable<R> liftA3 (final Function<T, BiFunction<P, Q, R>> fn, final Iterable<P> ps, final Iterable<Q> qs) {
+        return apply(ps.liftA2((p,  q) -> (t -> fn.apply(t).apply(p, q)), qs));        
+    }
+    
+    default <P, Q, R, S> Iterable<S> liftA4 (
+        final Function<T, Function<P, BiFunction<Q, R, S>>> fn, 
+        final Iterable<P> ps, 
+        final Iterable<Q> qs,
+        final Iterable<R> rs) {
+        return apply(ps.liftA3(p -> (q, r) -> (t -> fn.apply(t).apply(p).apply(q, r)), qs, rs));
+    }
 
     default <R> Iterable<R> map (final Function<T, R> fn) {
         return foldLeft (
