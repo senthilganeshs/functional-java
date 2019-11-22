@@ -1,5 +1,6 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -24,6 +25,14 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
     @SuppressWarnings("unchecked")
     public static <R extends Comparable<R>> BinaryTree<R> nil() {
         return (BinaryTree<R>) EMPTY;
+    }
+    
+    public static <R extends Comparable<R>> BinaryTree<R> of (final Collection<R> values) {
+        BinaryTree<R> tree = nil();
+        for (final R value : values) {
+            tree = tree.build(value);
+        }
+        return tree;
     }
     
     public static <R extends Comparable<R>> BinaryTree<R> of (Iterable<R> values) {
@@ -167,6 +176,20 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
             if (this.value.compareTo(value) > 0)
                 return left.contains(value);
             return right.contains(value);
+        }
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals(final Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (other instanceof AVLTree) {
+                AVLTree<T> btOther = (AVLTree<T>) other;
+                if (btOther.value.equals(value)) {
+                    return btOther.left.equals(left) && btOther.right.equals(right);
+                }
+            }
+            return false;
         }
     }
     

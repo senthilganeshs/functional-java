@@ -9,6 +9,14 @@ public interface Either<A, B> extends Iterable<B> {
     
     <R> R either (final Function<A, R> fa, final Function<B, R> fb);
     
+    public static <P, Q> Either <P, Q> left (final P value) {
+        return new Left<>(value);
+    }
+    
+    public static <P, Q> Either <P, Q> right (final Q value) {
+        return new Right<>(value);
+    }
+    
     default B fromRight (final B def) {
         return either (a -> def, b -> b);
     }
@@ -51,6 +59,23 @@ public interface Either<A, B> extends Iterable<B> {
         public <R> R either(Function<A, R> fa, Function<B, R> fb) {
             return fa.apply(value);
         }
+        
+        @Override
+        public String toString() {
+            return "Left " + value;
+        }
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals(final Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (other instanceof Left) {
+                Left<A, B> lOther = ((Left<A, B>) other);
+                return lOther.value.equals(value);
+            }
+            return false;
+        }
     }
     
     final static class Right<A, B> implements Either <A, B> {
@@ -80,6 +105,22 @@ public interface Either<A, B> extends Iterable<B> {
         @Override
         public <R> R either(Function<A, R> fa, Function<B, R> fb) {
             return fb.apply(value);
-        }        
+        }
+        
+        @Override
+        public String toString() {
+            return "Right " + value;
+        }
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals (final Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (other instanceof Right) {
+                Right<A, B> rOther = ((Right<A,B>) other);
+                return rOther.value.equals(value);
+            }
+            return false;
+        }
     }
 }

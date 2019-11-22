@@ -111,6 +111,17 @@ public interface List<T> extends Iterable<T> {
             return "";
         }
         
+        @Override
+        public boolean equals(final Object other) {
+            if (other == null)
+                return false;
+            if (other == this)
+                return true;
+            if (other instanceof EmptyList)
+                return true;
+            return false;
+        }
+        
     }
     
     final static class LinkedList<T> implements List<T> {
@@ -137,6 +148,21 @@ public interface List<T> extends Iterable<T> {
         @Override
         public String toString() {
             return head.foldLeft("[", (r, t) -> r + t + ",") + tail + "]";
+        }
+        
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @Override
+        public boolean equals(final Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            
+            if (other instanceof LinkedList) {
+                LinkedList<T> llOther = (LinkedList<T>) other;
+                if (llOther.tail.equals(((LinkedList) other).tail)) {
+                    return llOther.head.equals(head);
+                }
+            }
+            return false;
         }
     }
 }
