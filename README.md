@@ -59,3 +59,14 @@ Iterable.sequence(List.of(1,2,3).traverse(i -> Maybe.some(i + 1)));
 Iterable.sequence(Iterable.sequence(List.of(1,2,3).traverse(i -> Maybe.some(i + 1))));
 > Some ([2, 3, 4])
 ```
+
+### Performance Benchmarks 
+Tested the BinaryTree implementation with the java.util.TreeSet and got the below benchmarking results
+
+```
+Benchmark                            (size)  Mode  Cnt   Score   Error  Units
+IterableBenchmark.binaryTreeAsSet   1000000  avgt   20   3.053 ± 0.296  ms/op
+IterableBenchmark.binaryTreeAsSet  10000000  avgt   20  35.363 ± 0.406  ms/op
+IterableBenchmark.treeSet           1000000  avgt   20   3.690 ± 0.163  ms/op
+IterableBenchmark.treeSet          10000000  avgt   20  42.068 ± 0.578  ms/op
+```
