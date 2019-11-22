@@ -17,8 +17,6 @@ Following data-structures are supported as of now.
 
 ### Examples
 
-We can transform an existing java.util.List<T> into an Iterable<T> so that we can use the functional APIs.
-
 ```java
 List.of(1,2,3,4,5).take(2);
 > [1, 2]
