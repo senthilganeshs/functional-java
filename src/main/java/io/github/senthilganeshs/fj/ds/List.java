@@ -54,7 +54,7 @@ public interface List<T> extends Iterable<T> {
     static <R> Iterable<List<R>> intercalate (final List<R> rs, final List<List<R>> rss) {
         return rss.drop(1).foldLeft (rss.take(1), (r, t) -> r.build(rs).build(t));
     }
-    
+   
     static Boolean and (final Iterable<Boolean> bools) {
         return bools.foldLeft(true, (r, b) -> r && b);
     }

@@ -13,6 +13,20 @@ public interface Iterable<T> {
 
     <R> R foldLeft (final R seed, final BiFunction<R,T,R> fn);
     
+    public static <A, B> Iterable<A> lefts (final Iterable<Either<A, B>> es) {
+        return es.foldLeft (es.empty(), 
+            (rs, t) -> t.either(a -> rs.build(a), b -> rs));
+    }
+    
+    public static <A, B> Iterable<B> rights (final Iterable<Either<A, B>> es) {
+        return es.foldLeft(es.empty(), 
+            (rs, t) -> t.either(a -> rs, b -> rs.build(b)));
+    }
+    
+    public static <A, B> Tuple<Iterable<A>, Iterable<B>> partition (final Iterable<Either<A, B>> es) {
+        return Tuple.of(lefts(es), rights(es));
+    }
+    
     default <R> Iterable<Iterable<R>> traverse (final Function<T, Iterable<R>> fn) {            
         Iterable<Iterable<R>> seed = empty();
         Iterable<Iterable<R>> sseed = seed.build(empty());
@@ -54,7 +68,9 @@ public interface Iterable<T> {
         final Iterable<P> ps, 
         final Iterable<Q> qs,
         final Iterable<R> rs) {
-        return apply(ps.liftA3(p -> (q, r) -> (t -> fn.apply(t).apply(p).apply(q, r)), qs, rs));
+       
+        return apply(
+            ps.liftA3(p -> (q, r) -> (t -> fn.apply(t).apply(p).apply(q, r)), qs, rs));
     }
 
     default <R> Iterable<R> map (final Function<T, R> fn) {

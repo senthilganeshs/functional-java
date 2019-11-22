@@ -109,7 +109,6 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
                         //single-right-rotation
                         return rt.replaceLeft(rtlf -> 
                             new AVLTree<>(value, left, rtlf));
-                        
                     } else {
                         //right-left-rotation
                         return rt.swapLeft()
