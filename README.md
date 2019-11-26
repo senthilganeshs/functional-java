@@ -78,14 +78,3 @@ List.of(3,1,2,5,4).sort()
 Tuple.of ('a', 1).swap()
 > (1, a)
 ```
-
-### Performance Benchmarks 
-JMH results comparing java.util.TreeSet (treeSet) and Iterable<> implementation of BinaryTree (binaryTreeAsSet) is below:
-
-```
-Benchmark                            (size)  Mode  Cnt   Score   Error  Units
-IterableBenchmark.binaryTreeAsSet   1000000  avgt   20   3.053 ± 0.296  ms/op
-IterableBenchmark.binaryTreeAsSet  10000000  avgt   20  35.363 ± 0.406  ms/op
-IterableBenchmark.treeSet           1000000  avgt   20   3.690 ± 0.163  ms/op
-IterableBenchmark.treeSet          10000000  avgt   20  42.068 ± 0.578  ms/op
-```
