@@ -11,10 +11,11 @@ The functional API's are influenced from Haskell which is a pure functional lang
 Following data-structures are supported as of now.
 1. List
 2. Maybe
+3. Tuple
+4. Either
+5. BinaryTree (Set)
 
 ### Examples
-
-We can transform an existing java.util.List<T> into an Iterable<T> so that we can use the functional APIs.
 
 ```java
 List.of(1,2,3,4,5).take(2);
@@ -58,4 +59,22 @@ Iterable.sequence(List.of(1,2,3).traverse(i -> Maybe.some(i + 1)));
 
 Iterable.sequence(Iterable.sequence(List.of(1,2,3).traverse(i -> Maybe.some(i + 1))));
 > Some ([2, 3, 4])
+
+Iterable.lefts(List.of(Either.right(1), Either.left(2), Either.right(3)))
+> [2]
+
+Iterable.rights(List.of(Either.right(1), Either.left(2), Either.right(3)))
+> [1, 3]
+
+Iterable.partition(List.of(Either.right(10), Either.left(20), Either.right(30)))
+> ([20], [10,30])
+
+BinaryTree.of(3,1,2,5,4).contains(2)
+> true
+
+List.of(3,1,2,5,4).sort()
+> [1, 2, 3, 4, 5]
+
+Tuple.of ('a', 1).swap()
+> (1, a)
 ```
