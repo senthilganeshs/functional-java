@@ -2,6 +2,7 @@ package io.github.senthilganeshs.fj.ds;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
@@ -21,12 +22,12 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx12G"})
+@Fork(jvmArgs = {"-Xms2G", "-Xmx2G"})
 public class IterableBenchmark {
 
     @State(Scope.Thread)
     public static class IntValues {
-        @Param({"1000000", "10000000"})
+        @Param({"100000"})
         int size;
         
         java.util.List<Integer> array;
@@ -36,33 +37,50 @@ public class IterableBenchmark {
         @Setup
         public void setup() {
             array = new ArrayList<Integer>(size);
-            
+            Random rnd = new Random(0);
             for (int i = 0; i < size; i ++) {
-                array.add(Double.valueOf(Math.random()).intValue());
+                array.add(rnd.nextInt(size));
             }
-            find = array.get(new Random().nextInt(size));
+            find = array.get(rnd.nextInt(size));
         }
     }
     
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
             .include(IterableBenchmark.class.getSimpleName())
-            .forks(1)
             .build();
         new Runner(opt).run();
     }
     
     @Benchmark
-    public void binaryTreeAsSet(final IntValues input) {
+    public void iterableSet(final IntValues input) {
         if (!BinaryTree.of(input.array).contains(input.find)) {
             throw new RuntimeException("failed to check the value in set");
         }
     }
     
     @Benchmark
-    public void treeSet (final IntValues input) {
+    public void javaUtilTreeSet (final IntValues input) {
         if (!(new TreeSet<>(input.array)).contains(input.find)) {
             throw new RuntimeException ("failed to check the value in set");
+        }
+    }
+    
+    @Benchmark
+    public void iterableSetFind(final IntValues input) {
+        BinaryTree<Integer> set = BinaryTree.of(input.array);
+        Random rnd = new Random(0);
+        for (int i = 0; i < 1000; i ++) {
+            set.contains(rnd.nextInt(input.size));
+        }
+    }
+    
+    @Benchmark
+    public void javaUtilTreeSetFind (final IntValues input) {
+        Set<Integer> set = new TreeSet<>(input.array);
+        Random rnd = new Random(0);
+        for (int i = 0; i < 1000; i ++) {
+            set.contains(rnd.nextInt(input.size));
         }
     }
 }

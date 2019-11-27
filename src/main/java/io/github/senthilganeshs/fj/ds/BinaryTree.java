@@ -184,10 +184,7 @@ public interface BinaryTree <T extends Comparable<T>> extends Iterable<T>, Compa
             if (other == null) return false;
             if (other == this) return true;
             if (other instanceof AVLTree) {
-                AVLTree<T> btOther = (AVLTree<T>) other;
-                if (btOther.value.equals(value)) {
-                    return btOther.left.equals(left) && btOther.right.equals(right);
-                }
+                return ((AVLTree<T>) other).value.equals(value);
             }
             return false;
         }
