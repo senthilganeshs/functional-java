@@ -51,13 +51,6 @@ public interface List<T> extends Iterable<T> {
         return rss.drop(1).foldl (rss.take(1), (r, t) -> r.build(rs).build(t));
     }
     
-    static <R> Iterable<Iterable<R>> transpose (final Iterable<Iterable<R>> mat) {
-       
-       return mat;
-        
-        
-    }
-    
     public static Boolean and (final Iterable<Boolean> bools) {
         return bools.foldl(true, (r, b) -> r && b);
     }

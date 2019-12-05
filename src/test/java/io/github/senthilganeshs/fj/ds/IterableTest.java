@@ -210,9 +210,4 @@ public class IterableTest {
         Assert.assertTrue(Iterable2.goBack(Iterable2.goForward(List.of(1,2,3,4).zipper())).equals(Tuple.of(List.of(1,2,3,4), List.of())));
         
     }
-    
-    @Test
-    public void testZip () throws  Exception {
-        System.out.println(List.zip(List.of(1,2,3), List.of('a','b','c')));
-    }
 }
