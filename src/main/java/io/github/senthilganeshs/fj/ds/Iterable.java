@@ -7,46 +7,85 @@ import java.util.function.Predicate;
 
 public interface Iterable<T> {
 
+    /**
+     * Returns empty implementation of this data-structure.
+     * 
+     * @param <R>
+     * @return
+     */
     <R> Iterable<R> empty();
 
+    /**
+     * Returns same data-structure after accepting input value.
+     * 
+     * @param input
+     * @return
+     */
     Iterable<T> build (final T input);
-
-    <R> R foldLeft (final R seed, final BiFunction<R,T,R> fn);
     
+    
+    /**
+     * Travel the data-structure in the left to right order.
+     * 
+     * @param <R>
+     * @param seed
+     * @param fn
+     * @return
+     */
+    
+    <R> R foldl (final R seed, final BiFunction<R,T,R> fn);
+    
+    default Iterable2<Maybe<T>, Iterable<T>> unbuild() {
+        return Tuple.of(Maybe.nothing(), empty());
+    }
+    
+    
+    /*
+     * BEGIN of default and static methods. 
+     * */
+    
+    default <R> R foldr (final R seed, final BiFunction<T,R,R> fn) {
+        final Function<R, R> res = 
+            foldl(a -> a,
+                (g, t) -> s -> g.apply(fn.apply(t, s)));
+        return res.apply(seed);
+    }
+    
+    public static <R extends Comparable<R>> Iterable<R> sort (final Iterable<R> iter) {
+        return BinaryTree.of(iter).sorted();
+    }
+   
     public static <A, B> Iterable<A> lefts (final Iterable<Either<A, B>> es) {
-        return es.foldLeft (es.empty(), 
+        return es.foldl (es.empty(), 
             (rs, t) -> t.either(a -> rs.build(a), b -> rs));
     }
     
     public static <A, B> Iterable<B> rights (final Iterable<Either<A, B>> es) {
-        return es.foldLeft(es.empty(), 
+        return es.foldl(es.empty(), 
             (rs, t) -> t.either(a -> rs, b -> rs.build(b)));
     }
     
     public static <A, B> Tuple<Iterable<A>, Iterable<B>> partition (final Iterable<Either<A, B>> es) {
         return Tuple.of(lefts(es), rights(es));
     }
+
+    public static <R> Iterable<Iterable<R>> sequence (final Iterable<Iterable<R>> rs) {
+        return rs.traverse(id -> id);
+    }
+    
+    default Tuple<Iterable<T>, Iterable<T>> zipper () {
+        return Tuple.of(this, empty());
+    }
     
     default <R> Iterable<Iterable<R>> traverse (final Function<T, Iterable<R>> fn) {            
         Iterable<Iterable<R>> seed = empty();
         Iterable<Iterable<R>> sseed = seed.build(empty());
        
-        return foldLeft (sseed, (rrs, t) -> fn.apply(t).liftA2((r,  rs) -> rs.build(r), rrs));
+        return foldl (sseed, (rrs, t) -> fn.apply(t).liftA2((r,  rs) -> rs.build(r), rrs));
     }
-    
-    static <R> Iterable<Iterable<R>> sequence (final Iterable<Iterable<R>> rs) {
-        return rs.traverse(ir -> ir);
-    }
-    
-    default <R> R foldRight (final R seed, final BiFunction<T,R,R> fn) {
-        final Function<R, R> res = 
-            foldLeft(a -> a,
-                (g, t) -> s -> g.apply(fn.apply(t, s)));
-        return res.apply(seed);
-    }
-
+   
     default Iterable<T> filter (final Predicate<T> pred) {
-        return foldLeft(
+        return foldl(
             empty(),
             (r, t) -> pred.test(t) ? r.build(t) : r);
     }
@@ -74,30 +113,30 @@ public interface Iterable<T> {
     }
 
     default <R> Iterable<R> map (final Function<T, R> fn) {
-        return foldLeft (
+        return foldl (
             empty(),
             (rs, t) -> rs.build(fn.apply(t)));
     }
 
     default Iterable<T> concat (final Iterable<T> first) {
-        return foldLeft(first, (ts, t) -> ts.build(t));
+        return foldl(first, (ts, t) -> ts.build(t));
     }
 
     default <R> Iterable<R> flatMap (final Function<T, Iterable<R>> fn) {
-        return foldLeft (
+        return foldl (
             empty(),
             (rs, t) -> fn.apply(t).concat(rs));
     }
 
     default <R> Iterable<R> apply (final Iterable<Function<T, R>> fns) {
-        return fns.flatMap(f -> map(f));
+        return fns.flatMap(this::map);
     }
 
     default Iterable<T> forEach (final Consumer<T> action) {
-        return foldLeft(this,
+        return foldl(this,
             (__, t) -> {
                 action.accept(t);
-                return null;
+                return this;
             });
     }    
 }

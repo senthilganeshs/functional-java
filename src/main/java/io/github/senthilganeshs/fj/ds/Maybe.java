@@ -29,7 +29,7 @@ public interface Maybe<T> extends Iterable<T> {
         }
 
         @Override
-        public <R> R foldLeft(R seed, BiFunction<R, T, R> fn) {
+        public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             return seed;
         }
 
@@ -68,7 +68,7 @@ public interface Maybe<T> extends Iterable<T> {
         }
 
         @Override
-        public <R> R foldLeft(R seed, BiFunction<R, T, R> fn) {
+        public <R> R foldl(R seed, BiFunction<R, T, R> fn) {
             return fn.apply(seed, value);
         }
 

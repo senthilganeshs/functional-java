@@ -1,8 +1,5 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -15,7 +12,6 @@ public class IterableTest {
         List.of(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         Maybe.some(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         Either.right(10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
-        Tuple.of("Hello", 10).map(i -> i + 10).forEach(i -> Assert.assertTrue(i == 20));
         BinaryTree.of(3,1,2,4,5).map(i -> i + 10).equals(List.of(11,12,13,14,15));        
     }
     
@@ -24,7 +20,6 @@ public class IterableTest {
         List.of(10).flatMap(i -> Maybe.some(i + 10)).forEach(i -> Assert.assertTrue(i == 20));
         Maybe.some(10).flatMap(i -> List.of(i + 10)).forEach(i -> Assert.assertTrue(i == 20));
         Either.right(10).flatMap(i -> Maybe.some(i + 10)).forEach(i -> Assert.assertTrue(i == 20));
-        Tuple.of("Hello", 10).flatMap(i -> List.of(i + 10)).forEach(i -> Assert.assertTrue(i == 20));
         BinaryTree.of(3,1,2,4,5).flatMap(i -> Maybe.some(i + 10)).equals(List.of(11,12,13,14,15));
     }
     
@@ -34,31 +29,24 @@ public class IterableTest {
             (int)List.of(1,2,3)
             .apply(
                 Maybe.some((Integer i) -> i - 1))
-            .foldLeft(0, (r, i) -> r + (Integer) i), 
+            .foldl(0, (r, i) -> r + (Integer) i), 
             2);
         
         Assert.assertEquals(
             (int)Maybe.some(3)
             .apply(
                 List.of(i -> i - 1, i -> i - 2))
-            .foldLeft(0, (r, i) -> r + (Integer) i), //sum to be 1 + 2 = 3
+            .foldl(0, (r, i) -> r + (Integer) i), //sum to be 1 + 2 = 3
             3);
         
         Assert.assertEquals(
             (int)Either.right(3)
             .apply(
                 List.of(i -> i - 1, i -> i - 2))
-            .foldLeft(0, (r, i) -> r + (Integer) i), //sum to be 1 + 2 = 3
+            .foldl(0, (r, i) -> r + (Integer) i), //sum to be 1 + 2 = 3
             3);
         
-        Assert.assertEquals(
-            (int)Tuple.of("Hello", 3)
-            .apply(
-                List.of(i -> i - 1, i -> i - 2))
-            .foldLeft(0, (r, i) -> r + (Integer) i), //sum to be 1 + 2 = 3
-            3);
-        
-        Assert.assertEquals(
+       Assert.assertEquals(
             BinaryTree.of(3,1,2,5,4).apply(Maybe.some(i -> i - 1)), 
             Maybe.some(4));
     }
@@ -79,11 +67,6 @@ public class IterableTest {
             Either.left(10).toString());
         
         Assert.assertEquals(
-            Tuple.of("Hello", 10)
-            .filter(i -> i == 20).toString(),
-            Tuple.nil().toString());
-        
-        Assert.assertEquals(
             BinaryTree.of(3,1,2,5,4)
             .filter(i -> i == 2),
             BinaryTree.of(2));
@@ -96,28 +79,21 @@ public class IterableTest {
             (int) List.of(1,1)
             .traverse(i -> List.of('a', 'b', 'c'))
             .flatMap(id -> id)
-            .foldLeft(0, (r, c) -> r + 1),
+            .foldl(0, (r, c) -> r + 1),
             (int) Math.pow(3, 2) * 2);
         
         Assert.assertEquals(
             (int) Maybe.some(1)
             .traverse(i -> List.of('a', 'b', 'c'))
             .flatMap(id -> id)
-            .foldLeft(0, (r, c) -> r + 1),
+            .foldl(0, (r, c) -> r + 1),
             3);        
         
         Assert.assertEquals(
             (int) Either.right(1)
             .traverse(i -> List.of('a', 'b', 'c'))
             .flatMap(id -> id)
-            .foldLeft(0, (r, c) -> r + 1),
-            3);
-        
-        Assert.assertEquals(
-            (int) Tuple.of("Hello", 1)
-            .traverse(i -> List.of('a', 'b', 'c'))
-            .flatMap(id -> id)
-            .foldLeft(0, (r, c) -> r + 1),
+            .foldl(0, (r, c) -> r + 1),
             3);
         
         Assert.assertEquals(
@@ -137,12 +113,7 @@ public class IterableTest {
         Assert.assertEquals(
             Iterable.sequence(
                 List.of(Either.right(1), Either.left(2))),
-            Either.left(2));
-        
-        Assert.assertEquals(
-            Iterable.sequence(
-                List.of(Tuple.of('a', 1), Tuple.of('b', 2))),
-            Tuple.of(null, List.of(1, 2))); 
+            Either.left(2));                       
     }
     
     @Test
@@ -184,7 +155,7 @@ public class IterableTest {
     @Test
     public void testList() throws Exception {
         Assert.assertEquals(
-            List.sort(List.of(3,1,2,5,4)),
+            Iterable.sort(List.of(3,1,2,5,4)),
             List.of(1,2,3,4,5));
         
         Assert.assertEquals(
@@ -231,5 +202,17 @@ public class IterableTest {
         
         Assert.assertTrue(BinaryTree.of(1,2,3,4,5,6,7,8,9).contains(5));
         Assert.assertFalse(BinaryTree.of(1,2,3,4,5,6,7,8).contains(9));                
+    }
+    
+    @Test
+    public void testZipper () throws Exception {
+        Assert.assertTrue(Iterable2.goForward(List.of(1,2,3,4).zipper()).equals(Tuple.of(List.of(1,2,3), List.of(4))));
+        Assert.assertTrue(Iterable2.goBack(Iterable2.goForward(List.of(1,2,3,4).zipper())).equals(Tuple.of(List.of(1,2,3,4), List.of())));
+        
+    }
+    
+    @Test
+    public void testZip () throws  Exception {
+        System.out.println(List.zip(List.of(1,2,3), List.of('a','b','c')));
     }
 }

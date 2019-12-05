@@ -1,10 +1,8 @@
 package io.github.senthilganeshs.fj.ds;
 
-import java.util.function.BiFunction;
+public interface Tuple<A, B> extends Iterable2<A, B> {
 
-public interface Tuple<A, B> extends Iterable<B> {
-
-    @Override Tuple<A, B> build (final B input);
+    @Override Tuple<A, B> build (final A a, final B b);
     
     Tuple<B, A> swap ();
     
@@ -22,20 +20,20 @@ public interface Tuple<A, B> extends Iterable<B> {
     final static class Nil<A, B> implements Tuple<A, B> {
 
         @Override
-        public <R> Iterable<R> empty() {
+        public <R, S> Iterable2<R, S> empty() {
             return nil();
         }
 
         @Override
-        public <R> R foldLeft(final R seed, final BiFunction<R, B, R> fn) {
+        public <T> T foldl(final T seed, final TriFunction<T, A, B, T> fn) {
             return seed;
         }
 
         @Override
-        public Tuple<A, B> build(final B input) {
-            return new Simple <>(null, input);
+        public Tuple<A, B> build(final A a, final B b) {
+            return new Simple <>(a, b);
         }
-
+     
         @Override
         public Tuple<B, A> swap() {
             return new Nil<>();
@@ -66,19 +64,18 @@ public interface Tuple<A, B> extends Iterable<B> {
         }
         
         @Override
-        public <R> Iterable<R> empty() {
+        public <R, S> Iterable2<R, S> empty() {
             return new Nil<>();
         }
 
         @Override
-        public <R> R foldLeft(final R seed, final BiFunction<R, B, R> fn) {
-            return fn.apply(seed, b);
+        public <T> T foldl(final T seed, final TriFunction<T, A, B, T> fn) {
+            return fn.apply(seed, a, b);
         }
 
         @Override
-        public Tuple<A, B> build(final B input) {
-            //discard the old value
-            return new Simple<>(a, input);
+        public Tuple<A, B> build(final A a, final B b) {
+            return new Simple<>(a, b);
         }
 
         @Override

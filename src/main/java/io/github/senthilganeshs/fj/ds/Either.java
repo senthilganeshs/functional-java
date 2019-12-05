@@ -46,7 +46,7 @@ public interface Either<A, B> extends Iterable<B> {
         }
 
         @Override
-        public <R> R foldLeft(final R seed, final BiFunction<R, B, R> fn) {
+        public <R> R foldl(final R seed, final BiFunction<R, B, R> fn) {
             return seed;
         }
 
@@ -92,7 +92,7 @@ public interface Either<A, B> extends Iterable<B> {
         }
 
         @Override
-        public <R> R foldLeft(final R seed, final BiFunction<R, B, R> fn) {
+        public <R> R foldl(final R seed, final BiFunction<R, B, R> fn) {
             return fn.apply(seed, value);
         }
 
