@@ -3,7 +3,7 @@
 
 	<groupId>io.github.senthilganeshs</groupId>
 	<artifactId>functional-java</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>functional-java</name>
@@ -151,7 +151,7 @@
     	<connection>scm:git:git://github.com/senthilganeshs/functional-java.git</connection>
     	<developerConnection>scm:git:senthilganeshs@github.com:functional-java/functional-java.git</developerConnection>
     	<url>https://github.com/senthilganeshs/functional-java</url>
-    	<tag>functional-java-1.0.0</tag>
+    	<tag>HEAD</tag>
     </scm>
 
 	<dependencies>
