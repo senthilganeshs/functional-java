@@ -194,6 +194,13 @@ public class IterableTest {
     }
     
     @Test
+    public void testConcat() throws Exception {
+        Assert.assertEquals(
+            Maybe.some(5).concat(List.of(1,2,3,4)), 
+            List.of(1,2,3,4,5));
+    }
+    
+    @Test
     public void testBinarytree() throws Exception {
         Assert.assertEquals(BinaryTree.of(1,2,3).compareTo(2), 0);//left rotation.
         Assert.assertEquals(BinaryTree.of(3,1,2).compareTo(2), 0);//left-right rotation
