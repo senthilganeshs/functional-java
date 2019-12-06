@@ -65,7 +65,7 @@ public interface Tuple<A, B> extends Iterable2<A, B> {
         
         @Override
         public <R, S> Iterable2<R, S> empty() {
-            return new Nil<>();
+            return nil();
         }
 
         @Override

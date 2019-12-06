@@ -72,8 +72,8 @@ public interface Iterable<T> {
     public static <R> Iterable<Iterable<R>> sequence (final Iterable<Iterable<R>> rs) {
         return rs.traverse(id -> id);
     }
-    
-    default Tuple<Iterable<T>, Iterable<T>> zipper () {
+ 
+    default Iterable2<Iterable<T>, Iterable<T>> zipper () {
         return Tuple.of(this, empty());
     }
     

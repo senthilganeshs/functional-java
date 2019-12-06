@@ -12,6 +12,10 @@ public interface Iterable2<A, B> {
 
     <T> T foldl (final T seed, final TriFunction<T,A, B, T> fn);
     
+    default Iterable3<Maybe<A>, Maybe<B>, Iterable2<A, B>> unbuild() {
+        return Triple.of(Maybe.nothing(), Maybe.nothing(), empty());
+    }
+    
     public static <R> Iterable2<Iterable<R>, Iterable<R>> goForward(final Iterable2<Iterable<R>, Iterable<R>> zipper) {
         return zipper.foldl(
             zipper.empty(), 
