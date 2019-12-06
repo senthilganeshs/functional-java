@@ -27,7 +27,7 @@ List.of(1,2,3,4,5).drop(2);
 List.of(1,2,3,4,5).reverse();
 > [5, 4, 3, 2, 1]
 
-List.of("+91","123","456","7890").intersperse("-").foldLeft("", this::concat);
+List.of("+91","123","456","7890").intersperse("-").foldl("", this::concat);
 > +91-123-456-7890
 
 List.of(1,2,3,4,5,6,7,8).filter(i -> i % 2 == 0);
@@ -35,6 +35,12 @@ List.of(1,2,3,4,5,6,7,8).filter(i -> i % 2 == 0);
 
 List.of(1,2,3).map (i -> i * 2);
 > [2, 4, 6]
+
+Maybe.some(5).concat(List.of(1,2,3,4))
+> [1,2,3,4,5]
+
+List.of(1,4,9).concat(BinaryTree.of(3))
+> { Label : 3, left = { Label : 1, left = [], right = [] }, right = { Label : 4, left = [], right = { Label : 9, left = [], right = [] } } }
 
 List.of(1,2,3).flatMap(i -> (i < 3) ? Maybe.some(i) : Maybe.nothing());
 > Nothing
@@ -77,4 +83,16 @@ List.of(3,1,2,5,4).sort()
 
 Tuple.of ('a', 1).swap()
 > (1, a)
+
+List.of(1,2).zipper()
+> ([1,2], )
+
+Iterable2.goForward(List.of(1,2).zipper())
+> ([1], [2])
+
+Iterable2.goForward(Iterable2.goForward(List.of(1,2).zipper()))
+> (, [2,1])
+
+Iterable2.goBack(Iterable2.goForward(List.of(1,2).zipper()))
+> ([1,2], )
 ```
