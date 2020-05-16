@@ -27,12 +27,6 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
     
     static BinaryTree<Integer> EMPTY = new Empty<>();
     
-    /**
-     * Use the nil (final Comparator<R> comparator) for R which doesn't implement Comparable
-     * 
-     * @param <R>
-     * @return
-     */
     @SuppressWarnings("unchecked")
     @Deprecated
     public static <R extends Comparable<R>> BinaryTree<R> nil() {
