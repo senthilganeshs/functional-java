@@ -3,6 +3,18 @@
 
 Functional Java is an initiative to bring functional APIs to JAVA without compromizing on object oriented programming principes.
 
+Maven repository
+https://mvnrepository.com/artifact/io.github.senthilganeshs/functional-java/1.0.0
+```xml
+<!-- https://mvnrepository.com/artifact/io.github.senthilganeshs/functional-java -->
+<dependency>
+    <groupId>io.github.senthilganeshs</groupId>
+    <artifactId>functional-java</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+
 ### Features
 This is just a start and came out of preparing content for this [blog](https://senthilganesh.hashnode.dev/functional-data-structures-in-java-ck2o2v8ep003lkjs1by0qpsm5)
 
