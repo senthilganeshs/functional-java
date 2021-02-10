@@ -7,33 +7,34 @@ import java.util.function.Function;
 
 public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
     
-    @Override public BinaryTree<T> build(final T value);
+    @Override
+    BinaryTree<T> build(final T value);
     
     default BinaryTree<T> build (final T value, final Comparator<T> comparator) {
         return build (value); //discard the comparator.        
     }
     
-    public BinaryTree<T> replaceLeft (final Function<BinaryTree<T>, BinaryTree<T>> left);
+    BinaryTree<T> replaceLeft(final Function<BinaryTree<T>, BinaryTree<T>> left);
     
-    public BinaryTree<T> replaceRight (final Function<BinaryTree<T>, BinaryTree<T>> right);
+    BinaryTree<T> replaceRight(final Function<BinaryTree<T>, BinaryTree<T>> right);
     
-    public BinaryTree<T> swapLeft ();
+    BinaryTree<T> rotateLeft();
     
-    public BinaryTree<T> swapRight();
+    BinaryTree<T> rotateRight();
     
-    public int height();
+    int height();
     
-    public boolean contains (final T value);
+    boolean contains(final T value);
     
-    static BinaryTree<Integer> EMPTY = new Empty<>();
+    BinaryTree<Integer> EMPTY = new Empty<>();
     
     @SuppressWarnings("unchecked")
     @Deprecated
-    public static <R extends Comparable<R>> BinaryTree<R> nil() {
+    static <R extends Comparable<R>> BinaryTree<R> nil() {
         return (BinaryTree<R>) EMPTY;
     }
     
-    public static <R> BinaryTree<R> nil (final Comparator<R> comparator) {
+    static <R> BinaryTree<R> nil(final Comparator<R> comparator) {
         return new Empty<R>() {
             @Override
             public BinaryTree<R> build (final R input) {
@@ -42,24 +43,24 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
         };
     }
     
-    public static <R extends Comparable<R>> BinaryTree<R> of (final Collection<R> values) {
+    static <R extends Comparable<R>> BinaryTree<R> of(final Collection<R> values) {
         return of ((r1, r2) -> r1.compareTo(r2), values);
     }
     
-    public static <R extends Comparable<R>> BinaryTree<R> of (final Iterable<R> values) {
+    static <R extends Comparable<R>> BinaryTree<R> of(final Iterable<R> values) {
         return of ((r1, r2) -> r1.compareTo(r2), values);
     }
     
     @SuppressWarnings("unchecked")
-    public static <R extends Comparable<R>> BinaryTree<R> of (R...values) {
+    static <R extends Comparable<R>> BinaryTree<R> of(R... values) {
         return of ((r1, r2) -> r1.compareTo(r2), values);
     }
     
-    public static <R> BinaryTree<R> of (final Comparator<R> comparator, final Iterable<R> values) {
+    static <R> BinaryTree<R> of(final Comparator<R> comparator, final Iterable<R> values) {
         return values.foldl(nil(comparator), (r, t) -> r.build(t));
     }
     
-    public static <R> BinaryTree<R> of (final Comparator<R> comparator, final Collection<R> values) {
+    static <R> BinaryTree<R> of(final Comparator<R> comparator, final Collection<R> values) {
         BinaryTree<R> tree = nil(comparator);
         for (final R value : values) {
             tree = tree.build(value);
@@ -69,7 +70,7 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
     
     
     @SuppressWarnings("unchecked")
-    public static <R> BinaryTree<R> of (final Comparator<R> comparator, R...values) {
+    static <R> BinaryTree<R> of(final Comparator<R> comparator, R... values) {
         BinaryTree<R> tree = nil(comparator);
         if (values == null || values.length == 0)
             return tree;
@@ -80,11 +81,11 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
         return tree;
     }
     
-    public default List<T> sorted () {
+    default List<T> sorted() {
         return foldl (List.nil(), (r, t) -> r.build(t));
     }
     
-    final static class AVLTree<T> implements BinaryTree<T> {
+    final class AVLTree<T> implements BinaryTree<T> {
 
         private final BinaryTree<T> right;
         private final BinaryTree<T> left;
@@ -121,48 +122,41 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
         public BinaryTree<T> build(T other) {
             if (comparator.compare(this.value, other) == 0)
                 return this;
+
+            BinaryTree<T> lf;
+            BinaryTree<T> rt;
             
             if (comparator.compare(this.value, other) > 0) {
-                BinaryTree<T> lf = left.build(other);
-                int lfh = lf.height();
-                int rth = right.height();
-                
-                if (Math.abs(lfh - rth) == 2 ) {
-                    if (lf.compareTo(other) > 0) {
-                        //single-left-rotation
-                        return lf.replaceRight(
-                                lfrt -> 
-                                new AVLTree<>(this.value, lfrt, right, comparator));
-                    } else {
-                        //left-right-double rotation;
-                        return lf.swapRight()
-                            .replaceRight(
-                                lfrt -> 
-                                new AVLTree<>(this.value, lfrt, right, comparator));
-                        
-                    }
+                lf = this.left.build(other);
+                rt = this.right;
+            } else {
+                lf = this.left;
+                rt = right.build(other);
+            }
+
+            int lfh = lf.height();
+            int rth = rt.height();
+
+            BinaryTree<T> newNode =  new AVLTree<>(value, lf, rt, comparator);;
+
+            if (lfh > rth && lfh - rth == 2) {
+                if (lf.compareTo(other) > 0) {
+                    //single-left-rotation - Ex: [3 [2 [1]]]
+                    return newNode.rotateLeft();
                 } else {
-                    return new AVLTree<>(value, lf, right, comparator);
+                    //right-lfet-double rotation - Ex: [3 [1[][2]]]
+                    return newNode.replaceLeft(BinaryTree::rotateRight).rotateLeft();
+                }
+            } else if (lfh < rth && rth - lfh == 2) {
+                if (rt.compareTo(other) < 0) {
+                    //single-right-rotation - Ex: [1 [][2 [][3]]]
+                    return newNode.rotateRight();
+                } else {
+                    //left-right-double rotation - Ex: [1 [][3 [2]]]
+                    return newNode.replaceRight(BinaryTree::rotateLeft).rotateRight();
                 }
             } else {
-                BinaryTree<T> rt = right.build(other);
-                int rth = rt.height();
-                int lfh = left.height();
-                
-                if (Math.abs(lfh - rth) == 2) {
-                    if (rt.compareTo(other) < 0) {
-                        //single-right-rotation
-                        return rt.replaceLeft(rtlf -> 
-                            new AVLTree<>(value, left, rtlf, comparator));
-                    } else {
-                        //right-left-rotation
-                        return rt.swapLeft()
-                            .replaceLeft(rtlf ->
-                            new AVLTree<>(value, left, rtlf, comparator));
-                    }
-                } else {
-                    return new AVLTree<>(value, left, rt, comparator);
-                }
+                return newNode;
             }
         }
 
@@ -194,13 +188,13 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
         }
 
         @Override
-        public BinaryTree<T> swapLeft() {
+        public BinaryTree<T> rotateLeft() {
             return left.replaceRight(lfrt -> 
                 new AVLTree<>(value, lfrt, right, comparator));
         }
 
         @Override
-        public BinaryTree<T> swapRight() {
+        public BinaryTree<T> rotateRight() {
             return right.replaceLeft(rtlf -> 
                 new AVLTree<>(value, left, rtlf, comparator));
         }
@@ -226,7 +220,7 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
         }
     }
     
-    static class Empty<T> implements BinaryTree<T> {
+    class Empty<T> implements BinaryTree<T> {
 
         @SuppressWarnings("unchecked")
         @Override
@@ -279,12 +273,12 @@ public interface BinaryTree <T> extends Iterable<T>, Comparable<T> {
         }
 
         @Override
-        public BinaryTree<T> swapLeft() {
+        public BinaryTree<T> rotateLeft() {
             return this;
         }
 
         @Override
-        public BinaryTree<T> swapRight() {
+        public BinaryTree<T> rotateRight() {
             return this;
         }
 
