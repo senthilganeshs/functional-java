@@ -3,7 +3,7 @@ package io.github.senthilganeshs.fj.ds;
 import java.util.function.BiFunction;
 
 
-public interface Maybe<T> extends Iterable<T> {
+public interface Maybe<T> extends Collection<T> {
 
     final static Maybe<Void> NOTHING = new Nothing<>();
 

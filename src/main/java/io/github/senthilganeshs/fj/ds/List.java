@@ -2,62 +2,9 @@ package io.github.senthilganeshs.fj.ds;
 
 import java.util.function.BiFunction;
 
-public interface List<T> extends Iterable<T> {
+public interface List<T> extends Collection<T> {
     
     @Override List<T> build(final T input);
-    
-    /**
-     * Utility functions
-     * 
-     */
-    
-    default int length() {
-        return foldl(0, (r, t) -> r + 1);
-    }
-    
-    @SuppressWarnings("unchecked")
-    default Iterable<T> drop (final int n) {
-        Object[] res = new Object[2];
-        res[0] = n;
-        res[1] = empty();
-        return (Iterable<T>) foldl (res, 
-            (r, t) -> ((Integer) r[0] > 0) ? 
-            new Object[] {(Integer) r[0] - 1, r[1]} : 
-            new Object[] {(Integer) r[0], ((Iterable<T>)r[1]).build(t)})[1];
-    }
-
-    default Iterable<T> reverse () {
-        return foldr (empty(), 
-            (t, r) -> r.build(t));
-    }
-    
-    @SuppressWarnings("unchecked")
-    default Iterable<T> take (final int n) {
-        Object[] res = new Object[2];
-        res[0] = n;
-        res[1] = empty();
-        
-        return (Iterable<T>)foldl(res,
-            (r, t) -> ((Integer) r[0] > 0) ?
-                new Object[] { (Integer) r[0] - 1, ((Iterable<T>)r[1]).build(t)} :
-                new Object[] { (Integer) r[0], r[1]})[1];
-    }
-    
-    default Iterable<T> intersperse (final T sep) {
-        return drop(1).foldl(take(1), (r, t) -> r.build(sep).build(t));
-    }
-    
-    static <R> Iterable<List<R>> intercalate (final List<R> rs, final List<List<R>> rss) {
-        return rss.drop(1).foldl (rss.take(1), (r, t) -> r.build(rs).build(t));
-    }
-    
-    public static Boolean and (final Iterable<Boolean> bools) {
-        return bools.foldl(true, (r, b) -> r && b);
-    }
-    
-    static Boolean or (final Iterable<Boolean> bools) {
-        return bools.foldl(false, (r, b) -> r || b);
-    }
     
     public static <R> List<R> of (final java.util.List<R> list) {
         return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);
@@ -88,7 +35,7 @@ public interface List<T> extends Iterable<T> {
     final static class EmptyList<T> implements List<T> {
 
         @Override
-        public <R> Iterable<R> empty() {
+        public <R> Collection<R> empty() {
             return nil();
         }
 
@@ -130,7 +77,7 @@ public interface List<T> extends Iterable<T> {
         }
         
         @Override
-        public <R> Iterable<R> empty() {
+        public <R> Collection<R> empty() {
             return nil();
         }
         @Override
@@ -141,11 +88,7 @@ public interface List<T> extends Iterable<T> {
         public List<T> build(T input) {
             return cons(this, input);
         }
-        @Override
-        public Tuple<Maybe<T>, Iterable<T>> unbuild () {
-            return Tuple.of(Maybe.some(tail), head);
-        }
-        
+
         @Override
         public String toString() {
             return head.foldl("[", (r, t) -> r + t + ",") + tail + "]";

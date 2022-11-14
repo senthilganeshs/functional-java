@@ -3,7 +3,7 @@ package io.github.senthilganeshs.fj.ds;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public interface Either<A, B> extends Iterable<B> {
+public interface Either<A, B> extends Collection<B> {
 
     @Override Either<A,B> build (final B value);
     
@@ -16,6 +16,17 @@ public interface Either<A, B> extends Iterable<B> {
     public static <P, Q> Either <P, Q> right (final Q value) {
         return new Right<>(value);
     }
+
+    public static <A, B> Collection<A> lefts (final Collection<Either<A, B>> es) {
+        return es.foldl (es.empty(), 
+            (rs, t) -> t.either(a -> rs.build(a), b -> rs));
+    }
+    
+    public static <A, B> Collection<B> rights (final Collection<Either<A, B>> es) {
+        return es.foldl(es.empty(), 
+            (rs, t) -> t.either(a -> rs, b -> rs.build(b)));
+    }   
+
     
     default B fromRight (final B def) {
         return either (a -> def, b -> b);
@@ -41,7 +52,7 @@ public interface Either<A, B> extends Iterable<B> {
         }
 
         @Override
-        public <R> Iterable<R> empty() {
+        public <R> Collection<R> empty() {
             return new Left<>(value);
         }
 
@@ -87,7 +98,7 @@ public interface Either<A, B> extends Iterable<B> {
         }
         
         @Override
-        public <R> Iterable<R> empty() {
+        public <R> Collection<R> empty() {
             return new Left<>(value);
         }
 
