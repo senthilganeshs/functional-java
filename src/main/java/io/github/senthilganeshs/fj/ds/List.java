@@ -1,13 +1,22 @@
 package io.github.senthilganeshs.fj.ds;
 
+import java.util.Arrays;
 import java.util.function.BiFunction;
 
 public interface List<T> extends Collection<T> {
     
     @Override List<T> build(final T input);
     
-    public static <R> List<R> of (final java.util.List<R> list) {
+    static <R> List<R> of (final java.util.List<R> list) {
         return list.stream().reduce(nil(), (rs, r) ->rs.build(r), (r1, r2) -> r2);
+    }
+
+    static <R> Collection<R> emptyQueue() {
+        return new EmptyList<>();
+    }
+
+    static <R> Collection<R> newQueue(R[] values) {
+        return Arrays.stream(values).reduce(emptyQueue(), (queue, r) -> queue.build(r), (a, b) -> b);
     }
     
     @SafeVarargs

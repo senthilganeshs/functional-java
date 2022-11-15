@@ -35,7 +35,7 @@ public interface Collection<T> {
     
     <R> R foldl (final R seed, final BiFunction<R,T,R> fn);
 
-    
+
     
     default <R> R foldr (final R seed, final BiFunction<T,R,R> fn) {
         final Function<R, R> res = 
@@ -55,6 +55,11 @@ public interface Collection<T> {
         return foldl(
             empty(),
             (r, t) -> pred.test(t) ? r.build(t) : r);
+    }
+
+    @SuppressWarnings("unchecked")
+    default Maybe<T> find(final Predicate<T> pred) {
+        return (Maybe<T>) filter(pred).apply(Maybe.some(t -> t));
     }
 
     default <R, S> Collection<S> liftA2 (final Function<T, Function<R, S>> fn, final Collection<R> rs) {
@@ -145,6 +150,10 @@ public interface Collection<T> {
 
     default Collection<Collection<T>> intercalate(final Collection<Collection<T>> rss) {
         return rss.drop(1).foldl(rss.take(1), (r, t) -> r.build(this).build(t));
+    }
+
+    default public Collection<T> slice(int start, int n) {
+        return drop(start).take(n);
     }
 
     public static <R> Collection<Collection<R>> sequence (final Collection<Collection<R>> rs) {
