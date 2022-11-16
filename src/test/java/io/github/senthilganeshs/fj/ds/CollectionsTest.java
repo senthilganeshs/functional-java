@@ -79,22 +79,22 @@ public class CollectionsTest {
             (int) List.of(1,1)
             .traverse(i -> List.of('a', 'b', 'c'))
             .flatMap(id -> id)
-            .foldl(0, (r, c) -> r + 1),
+            .count(),
             (int) Math.pow(3, 2) * 2);
         
         Assert.assertEquals(
             (int) Maybe.some(1)
             .traverse(i -> List.of('a', 'b', 'c'))
             .flatMap(id -> id)
-            .foldl(0, (r, c) -> r + 1),
+            .count(),
             3);        
         
         Assert.assertEquals(
-            (int) Either.right(1)
-            .traverse(i -> List.of('a', 'b', 'c'))
+            (int) List.of('a', 'b', 'c')
+            .traverse(i -> Either.right(1))
             .flatMap(id -> id)
-            .foldl(0, (r, c) -> r + 1),
-            3);
+            .count(),
+            1);
         
         Assert.assertEquals(
             Set.of(3,1,2,5,4)
@@ -175,7 +175,12 @@ public class CollectionsTest {
     public void testConcat() throws Exception {
         Assert.assertEquals(
             Maybe.some(5).concat(List.of(1,2,3,4)), 
+            Maybe.some(4));
+
+        Assert.assertEquals(
+            List.of(1,2,3,4).concat(Maybe.some(5)), 
             List.of(1,2,3,4,5));
+
     }
     
     @Test

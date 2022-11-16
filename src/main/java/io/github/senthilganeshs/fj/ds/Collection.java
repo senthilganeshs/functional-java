@@ -91,13 +91,13 @@ public interface Collection<T> {
     }
 
     default Collection<T> concat (final Collection<T> first) {
-        return foldl(first, (ts, t) -> ts.build(t));
+        return first.foldl(this, (ts, t) -> ts.build(t));
     }
 
     default <R> Collection<R> flatMap (final Function<T, Collection<R>> fn) {
         return foldl (
             empty(),
-            (rs, t) -> fn.apply(t).concat(rs));
+            (rs, t) -> rs.concat(fn.apply(t)));
     }
 
     default <R> Collection<R> apply (final Collection<Function<T, R>> fns) {
@@ -156,8 +156,20 @@ public interface Collection<T> {
         return drop(start).take(n);
     }
 
+    default public int count() {
+        return foldl(0, (count, t) -> count + 1);
+    }
+
+    public static <S, R extends Collection<S>> Collection<S> flatten(Collection<R> rs) {
+        return rs.flatMap(id -> id);
+    }
+
     public static <R> Collection<Collection<R>> sequence (final Collection<Collection<R>> rs) {
         return rs.traverse(id -> id);
+    }
+
+    public static <R extends Number> int sum(Collection<R> rs) {
+        return rs.foldl(0, (acc, r) -> acc + 1).intValue();
     }
  
 }
