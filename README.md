@@ -50,7 +50,7 @@ List.of(1,2,3).map (i -> i * 2);
 List.of(1,2,3,4).concat(Maybe.some(5));
 > [1,2,3,4,5]
 
-BinaryTree.of(3).concat(List.of(1,4,9));
+Set.of(3).concat(List.of(1,4,9));
 > { Label : 3, left = { Label : 1, left = [], right = [] }, right = { Label : 4, left = [], right = { Label : 9, left = [], right = [] } } }
 
 List.of(1,2,3).flatMap(i -> (i < 3) ? Maybe.some(i) : Maybe.nothing());
