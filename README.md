@@ -38,7 +38,7 @@ List.of(1,2,3,4,5).drop(2);
 List.of(1,2,3,4,5).reverse();
 > [5, 4, 3, 2, 1]
 
-List.of("+91","123","456","7890").intersperse("-").foldl("", this::concat);
+List.of("+91","123","456","7890").intersperse("-").foldl("", (a, b) -> a + b);
 > +91-123-456-7890
 
 List.of(1,2,3,4,5,6,7,8).filter(i -> i % 2 == 0);
@@ -54,7 +54,7 @@ Set.of(3).concat(List.of(1,4,9));
 > { Label : 3, left = { Label : 1, left = [], right = [] }, right = { Label : 4, left = [], right = { Label : 9, left = [], right = [] } } }
 
 List.of(1,2,3).flatMap(i -> (i < 3) ? Maybe.some(i) : Maybe.nothing());
-> Nothing
+> [1, 2]
 
 List.of(1,2,3).flatMap(i -> (i <=3) ? Maybe.some(i) : Maybe.nothing());
 > [1,2,3]
@@ -83,10 +83,7 @@ Either.lefts(List.of(Either.right(1), Either.left(2), Either.right(3)))
 Either.rights(List.of(Either.right(1), Either.left(2), Either.right(3)))
 > [1, 3]
 
-Collection.partition(List.of(Either.right(10), Either.left(20), Either.right(30)))
-> ([20], [10,30])
-
-BinaryTree.of(3,1,2,5,4).contains(2)
+Set.of(3,1,2,5,4).contains(2)
 > true
 
 Set.sort(List.of(3,1,2,5,4))

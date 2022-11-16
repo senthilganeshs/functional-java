@@ -30,7 +30,7 @@ public class CollectionsTest {
             .apply(
                 Maybe.some((Integer i) -> i - 1))
             .foldl(0, (r, i) -> r + (Integer) i), 
-            2);
+            3);
         
         Assert.assertEquals(
             (int)Maybe.some(3)
